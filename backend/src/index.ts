@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import "./db/index";
 import authRoutes from "./routes/auth";
+import interviewRoutes from "./routes/interview";
 dotenv.config();
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/interview", interviewRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: `Interview prep AI running perfectly` });
