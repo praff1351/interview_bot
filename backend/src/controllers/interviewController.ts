@@ -1,11 +1,20 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import { AuthRequest } from "../middleware/auth";
 import type { Response } from "express";
 import pool from "../db";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
+async function askGroq(prompt: string):Promise<string>{
+  const response = await groq.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [{role: "user", content: prompt}],
+    max_tokens: 1024
+  });
+  return response.choices[0].message.content?.trim() ?? "";
+}
 export const startInterview = async (
   req: AuthRequest,
   res: Response,
@@ -40,8 +49,8 @@ export const startInterview = async (
     let question = "";
 
     try {
-      const result = await model.generateContent(prompt);
-      question = result.response.text().trim();
+      const result = await askGroq(prompt);
+      question = result;
     } catch {
       question = "Tell me about yourself";
     }
@@ -107,8 +116,8 @@ export const submitAnswer = async (
     FEEDBACK: [your feedback]
     `;
 
-    const feedbackResult = await model.generateContent(feedbackPrompt);
-    const feedbackText = feedbackResult.response.text().trim();
+    const feedbackResult = await askGroq(feedbackPrompt);
+    const feedbackText = feedbackResult;
 
     const scoreMatch = feedbackText.match(/SCORE:\s*(\d+)/);
     const feedbackMatch = feedbackText.match(/FEEDBACK:\s*(.+)/s);
@@ -131,8 +140,8 @@ export const submitAnswer = async (
 
       let nextQuestion = "";
       try {
-        const nextResult = await model.generateContent(nextPrompt);
-        nextQuestion = nextResult.response.text().trim();
+        const nextResult = await askGroq(nextPrompt);
+        nextQuestion = nextResult;
       } catch {
         nextQuestion = "Explain a challenging project that you worked on.";
       }
