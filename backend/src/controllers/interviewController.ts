@@ -7,11 +7,11 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-async function askGroq(prompt: string):Promise<string>{
+async function askGroq(prompt: string): Promise<string> {
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
-    messages: [{role: "user", content: prompt}],
-    max_tokens: 1024
+    messages: [{ role: "user", content: prompt }],
+    max_tokens: 1024,
   });
   return response.choices[0].message.content?.trim() ?? "";
 }

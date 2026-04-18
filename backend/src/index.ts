@@ -21,6 +21,10 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: `Interview prep AI running perfectly` });
 });
 
+app.get("/api/interview/test", (req, res) => {
+  res.send("INTERVIEW ROUTE WORKING");
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
 });

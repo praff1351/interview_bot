@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/start", authMiddleware, startInterview);
 router.post("/answer", authMiddleware, submitAnswer);
-router.post("/sessions", authMiddleware, getSessions);
-router.post("/sessions:id", authMiddleware, getSessionDetails);
+router.get("/sessions", authMiddleware, getSessions);
+router.get("/sessions/:id", authMiddleware, getSessionDetails);
 
 export default router;
